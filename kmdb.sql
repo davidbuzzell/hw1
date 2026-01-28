@@ -94,10 +94,21 @@
 .headers off
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
--- TODO!
+
+DROP TABLE IF EXISTS Employments;
 
 -- Create new tables, according to your domain model
--- TODO!
+
+-- Employments: maps each actor to the movie they are in.
+--              NOTE: For actors that play multiple character,
+--                    create a new entity in this table for each character name
+CREATE TABLE Employments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor_id INTEGER,
+    character TEXT,
+    movie_id INTEGER
+);
+
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
