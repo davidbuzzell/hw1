@@ -95,32 +95,109 @@
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
 
-DROP TABLE IF EXISTS Employments;
+DROP TABLE IF EXISTS employments;
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS studios;
+DROP TABLE IF EXISTS agents;
 
 -- Create new tables, according to your domain model
 
--- Employments: maps each actor to the movie they are in.
+-- employments: maps each actor to the movie they are in.
 --              NOTE: For actors that play multiple character,
 --                    create a new entity in this table for each character name
-CREATE TABLE Employments (
+CREATE TABLE employments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     actor_id INTEGER,
-    character TEXT,
+    character TEXT,  -- name of the role the actor played
     movie_id INTEGER
 );
 
+-- movies: contains information about each movie
+CREATE TABLE movies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    year TEXT,
+    rating TEXT,
+    studio_id INTEGER
+);
+
+-- actors: contains information about each actor
+CREATE TABLE actors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    agent_id INTEGER
+);
+
+-- studios: contains information about each movie studio
+CREATE TABLE studios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT
+);
+
+-- agents: contains information about each actor's agent
+CREATE TABLE agents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT
+);
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
--- TODO!
+
+INSERT INTO employments (actor_id, character, movie_id)
+VALUES
+    (1, "Bruce Wayne", 1),
+    (2, "Alfred", 1),
+    (3, "Ra's Al Ghul", 1),
+    (4, "Rachel Dawes", 1),
+    (5, "Commissioner Gordon", 1),
+    (1, "Bruce Wayne", 2),
+    (6, "Joker", 2),
+    (7, "Harvey Dent", 2),
+    (2, "Alfred", 2),
+    (8, "Rachel Dawes", 2),
+    (1, "Bruce Wayne", 3),
+    (5, "Commissioner Gordon", 3),
+    (9, "Bane", 3),
+    (10, "John Blake", 3),
+    (11, "Selina Kyle", 3);
+
+INSERT INTO movies (title, year, rating, studio_id)
+VALUES
+    ("Batman Begins",         2005, "PG-13", 1),
+    ("The Dark Knight",       2008, "PG-13", 1),
+    ("The Dark Knight Rises", 2012, "PG-13", 1);
+
+INSERT INTO actors (name, agent_id)
+VALUES
+    ("Christian Bale", 1),
+    ("Michael Caine", NULL),
+    ("Liam Neeson", NULL),
+    ("Katie Holmes", NULL),
+    ("Gary Oldman", NULL),
+    ("Heath Ledger", NULL),
+    ("Aaron Eckhart", NULL),
+    ("Maggie Gyllenhaal", NULL),
+    ("Tom Hardy", NULL),
+    ("Joseph Gordon-Levitt", NULL),
+    ("Anne Hathaway", NULL);
+
+INSERT INTO studios (name)
+VALUES
+    ("Warner Bros.");
+
+INSERT INTO agents (name)
+VALUES
+    ("Mr. Agentman");
 
 -- Prints a header for the movies output
 .print "Movies"
 .print "======"
-.print ""
+-- .print ""
 
--- ***TODO!***
--- The SQL statement for the movies output goes here.
+SELECT movies.title, movies.year, movies.rating, studios.name
+FROM movies
+INNER JOIN studios ON movies.studio_id = studios.id;
 
 -- Example output:
 -- Movies
@@ -133,10 +210,12 @@ CREATE TABLE Employments (
 .print ""
 .print "Top Cast"
 .print "========"
-.print ""
+-- .print ""
 
--- ***TODO!***
--- The SQL statement for the cast output goes here.
+SELECT movies.title, actors.name, employments.character
+FROM employments
+INNER JOIN actors ON employments.actor_id = actors.id
+INNER JOIN movies ON employments.movie_id = movies.id;
 
 -- Example output:
 -- Top Cast
@@ -161,10 +240,11 @@ CREATE TABLE Employments (
 .print ""
 .print "Represented by agent"
 .print "===================="
-.print ""
+-- .print ""
 
--- ***TODO!***
--- The SQL statement for the represented actor(s) output goes here.
+SELECT actors.name
+FROM actors
+WHERE actors.agent_id IS NOT NULL;
 
 -- Example output:
 -- Represented by agent
